@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кибербезопасность</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="header">
+    <div class="logo">
+        КИБЕР<span>БЕЗОПАСНОСТЬ</span>
+    </div>
+
+    <ul class="nav-links">
+        <li><a href="#basics">ОСНОВЫ</a></li>
+        <li><a href="#threats">УГРОЗЫ</a></li>
+        <li><a href="osint.html">OSINT</a></li>
+        <li><a href="#defense">ЗАЩИТА</a></li>
+        <li><a href="#quiz">ТЕСТ</a></li>
+    </ul>
+</header>
+
+
+<main>
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="hero-label">
+            ЦИФРОВАЯ БЕЗОПАСНОСТЬ / 2026
+        </div>
+
+        <h1>
+            КИБЕР
+            <span>БЕЗОПАСНОСТЬ</span>
+        </h1>
+
+        <p class="hero-description">
+            Интернет стал частью нашей повседневной жизни.
+            Вместе с его возможностями появились новые угрозы,
+            способные повлиять на наши данные, устройства и аккаунты.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="#threats" class="button button-primary">
+                Исследовать угрозы
+            </a>
+
+            <a href="#quiz" class="button button-secondary">
+                Проверить себя
+            </a>
+        </div>
+
+    </section>
+
+
+    <!-- BASICS -->
+
+    <section class="section" id="basics">
+
+        <div class="section-label">
+            ОСНОВЫ
+        </div>
+
+        <h2>
+            Что такое<br>
+            <span>кибербезопасность?</span>
+        </h2>
+
+        <p class="section-intro">
+            Кибербезопасность — это комплекс мер, направленных
+            на защиту информации, устройств и пользователей
+            от цифровых угроз.
+        </p>
+
+
+        <div class="info-grid">
+
+            <article class="info-card">
+                <div class="card-number">01</div>
+
+                <h3>КОНФИДЕНЦИАЛЬНОСТЬ</h3>
+
+                <p>
+                    Только авторизованные люди должны иметь
+                    доступ к личной и конфиденциальной информации.
+                </p>
+            </article>
+
+
+            <article class="info-card">
+                <div class="card-number">02</div>
+
+                <h3>ЦЕЛОСТНОСТЬ</h3>
+
+                <p>
+                    Данные должны оставаться точными и защищёнными
+                    от несанкционированного изменения.
+                </p>
+            </article>
+
+
+            <article class="info-card">
+                <div class="card-number">03</div>
+
+                <h3>ДОСТУПНОСТЬ</h3>
+
+                <p>
+                    Системы и информация должны быть доступны
+                    пользователю тогда, когда они ему необходимы.
+                </p>
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- THREATS -->
+
+    <section class="section threats-section" id="threats">
+
+        <div class="section-label">
+            СУЩЕСТВУЮЩИЕ УГРОЗЫ
+        </div>
+
+        <h2>
+            Главные<br>
+            <span>угрозы</span>
+        </h2>
+
+        <p class="section-intro">
+            Цифровые угрозы постоянно развиваются.
+            Ниже представлены одни из наиболее распространённых
+            способов воздействия на пользователей.
+        </p>
+
+
+        <div class="threat-grid">
+
+            <article class="threat-card">
+
+                <div class="threat-icon">
+                    01
+                </div>
+
+                <h3>ФИШИНГ</h3>
+
+                <p>
+                    Обман пользователя с помощью поддельных
+                    сайтов, сообщений или писем.
+                </p>
+
+                <a href="phishing.html" class="learn-more">
+                    УЗНАТЬ БОЛЬШЕ →
+                </a>
+
+            </article>
+
+
+            <article class="threat-card">
+
+                <div class="threat-icon">
+                    02
+                </div>
+
+                <h3>ВРЕДОНОСНОЕ ПО</h3>
+
+                <p>
+                    Программы, созданные для повреждения,
+                    кражи информации или получения доступа
+                    к устройству.
+                </p>
+
+                <a href="malware.html" class="learn-more">
+                    УЗНАТЬ БОЛЬШЕ →
+                </a>
+
+            </article>
+
+
+            <article class="threat-card">
+
+                <div class="threat-icon">
+                    03
+                </div>
+
+                <h3>СОЦИАЛЬНАЯ ИНЖЕНЕРИЯ</h3>
+
+                <p>
+                    Манипуляция человеком для получения
+                    информации или выполнения определённых действий.
+                </p>
+
+                <a href="social-engineering.html" class="learn-more">
+                    УЗНАТЬ БОЛЬШЕ →
+                </a>
+
+            </article>
+
+
+            <article class="threat-card">
+
+                <div class="threat-icon">
+                    04
+                </div>
+
+                <h3>УТЕЧКИ ДАННЫХ</h3>
+
+                <p>
+                    Несанкционированное раскрытие персональной
+                    или конфиденциальной информации.
+                </p>
+
+                <a href="data-leaks.html" class="learn-more">
+                    УЗНАТЬ БОЛЬШЕ →
+                </a>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- DEFENSE -->
+
+    <section class="section" id="defense">
+
+        <div class="section-label">
+            ЛИЧНАЯ БЕЗОПАСНОСТЬ
+        </div>
+
+        <h2>
+            Построй свою<br>
+            <span>цифровую защиту</span>
+        </h2>
+
+
+        <div class="defense-list">
+
+            <div class="defense-item">
+
+                <div class="defense-number">01</div>
+
+                <div>
+                    <h3>УНИКАЛЬНЫЕ ПАРОЛИ</h3>
+
+                    <p>
+                        Используй разные сложные пароли
+                        для важных аккаунтов.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="defense-item">
+
+                <div class="defense-number">02</div>
+
+                <div>
+                    <h3>ДВУХФАКТОРНАЯ АУТЕНТИФИКАЦИЯ</h3>
+
+                    <p>
+                        Дополнительный способ подтверждения личности
+                        значительно повышает безопасность аккаунта.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="defense-item">
+
+                <div class="defense-number">03</div>
+
+                <div>
+                    <h3>ОБНОВЛЕНИЯ</h3>
+
+                    <p>
+                        Обновляй операционную систему и программы,
+                        чтобы закрывать известные уязвимости.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="defense-item">
+
+                <div class="defense-number">04</div>
+
+                <div>
+                    <h3>ОСТОРОЖНОСТЬ</h3>
+
+                    <p>
+                        Не переходи по подозрительным ссылкам
+                        и всегда проверяй источник информации.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- SCENARIO -->
+
+    <section class="scenario">
+
+        <div class="scenario-content">
+
+            <div class="section-label">
+                СИТУАЦИЯ / 01
+            </div>
+
+            <h2>
+                Ты бы<br>
+                <span>попался?</span>
+            </h2>
+
+            <div class="message-window">
+
+                <div class="message-header">
+                    НЕИЗВЕСТНЫЙ ПОЛЬЗОВАТЕЛЬ
+                </div>
+
+                <div class="message-body">
+
+                    <p>
+                        ⚠ Ваш аккаунт будет заблокирован
+                        через 24 часа.
+                    </p>
+
+                    <p>
+                        Для подтверждения личности перейдите
+                        по ссылке ниже.
+                    </p>
+
+                    <p class="fake-link">
+                        account-security.example
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="scenario-buttons">
+
+                <button
+                    class="button button-danger"
+                    onclick="phishingChoice('link')">
+                    Перейти по ссылке
+                </button>
+
+                <button
+                    class="button button-secondary"
+                    onclick="phishingChoice('check')">
+                    Проверить сообщение
+                </button>
+
+            </div>
+
+
+            <div id="scenario-result" class="scenario-result"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- QUIZ -->
+
+    <section class="section quiz-section" id="quiz">
+
+        <div class="section-label">
+            ПРОВЕРКА БЕЗОПАСНОСТИ
+        </div>
+
+        <h2>
+            Насколько ты<br>
+            <span>защищён?</span>
+        </h2>
+
+
+        <div class="quiz-box">
+
+            <div class="quiz-progress">
+                <span id="question-number">ВОПРОС 01 / 05</span>
+
+                <div class="progress-line">
+                    <div id="progress-bar"></div>
+                </div>
+            </div>
+
+
+            <h3 id="question">
+                Используешь ли ты разные пароли
+                для важных аккаунтов?
+            </h3>
+
+
+            <div class="quiz-buttons">
+
+                <button
+                    class="quiz-button"
+                    onclick="answerQuiz(true)">
+                    ДА
+                </button>
+
+                <button
+                    class="quiz-button"
+                    onclick="answerQuiz(false)">
+                    НЕТ
+                </button>
+
+            </div>
+
+
+            <div id="quiz-result" class="quiz-result"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FINAL -->
+
+    <section class="final-section">
+
+        <h2>
+            БЕЗОПАСНОСТЬ —<br>
+            ЭТО ПРИВЫЧКА.
+        </h2>
+
+        <p>
+            Чем больше ты знаешь о цифровых угрозах,
+            тем сложнее злоумышленникам обмануть тебя.
+        </p>
+
+        <a href="#" class="button button-primary">
+            Вернуться наверх
+        </a>
+
+    </section>
+
+</main>
+
+
+<footer class="footer">
+
+    <div class="logo">
+        КИБЕР<span>БЕЗОПАСНОСТЬ</span>
+    </div>
+
+    <div>
+        Индивидуальный проект · 2026
+    </div>
+
+</footer>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>

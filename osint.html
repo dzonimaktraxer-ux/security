@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT — Кибербезопасность</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #070707;
+            --surface: #0d0d0d;
+            --surface-light: #111111;
+            --border: #242424;
+            --text: #f2f2f2;
+            --muted: #858585;
+            --accent: #b7ff00;
+            --green-dark: #11150f;
+            --danger: #ff3b30;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Inter", sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* NETWORK BACKGROUND */
+
+        #osint-network {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -5;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .network-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -4;
+            pointer-events: none;
+            background:
+                radial-gradient(
+                    circle at center,
+                    transparent 0%,
+                    rgba(7, 7, 7, 0.25) 45%,
+                    rgba(7, 7, 7, 0.9) 100%
+                );
+        }
+
+        .network-vignette {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            pointer-events: none;
+            box-shadow: inset 0 0 180px 80px rgba(0, 0, 0, 0.75);
+        }
+
+        .scan-line {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 1px;
+            background: rgba(183, 255, 0, 0.08);
+            z-index: 10;
+            pointer-events: none;
+            animation: scan 8s linear infinite;
+        }
+
+        @keyframes scan {
+            0% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(100vh);
+            }
+        }
+
+        .network-label {
+            position: fixed;
+            z-index: -2;
+            color: rgba(183, 255, 0, 0.16);
+            font-family: "Space Mono", monospace;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            pointer-events: none;
+            text-transform: uppercase;
+        }
+
+        .label-1 {
+            top: 22%;
+            left: 5%;
+        }
+
+        .label-2 {
+            top: 36%;
+            right: 5%;
+        }
+
+        .label-3 {
+            bottom: 28%;
+            left: 7%;
+        }
+
+        .label-4 {
+            bottom: 18%;
+            right: 8%;
+        }
+
+        .label-5 {
+            top: 65%;
+            left: 43%;
+        }
+
+        /* HEADER */
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            background: rgba(7, 7, 7, 0.82);
+            backdrop-filter: blur(14px);
+        }
+
+        .nav {
+            max-width: 1300px;
+            margin: auto;
+            padding: 18px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .logo {
+            font-family: "Space Mono", monospace;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 25px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .nav-links a {
+            display: block;
+            color: var(--muted);
+            font-family: "Space Mono", monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            transition: 0.25s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        /* HERO */
+
+        .article-hero {
+            max-width: 1300px;
+            margin: auto;
+            padding: 120px 30px 100px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            background: rgba(7, 7, 7, 0.18);
+        }
+
+        .article-hero::before {
+            content: "OSINT";
+            position: absolute;
+            right: -30px;
+            bottom: -90px;
+            font-family: "Anton", sans-serif;
+            font-size: clamp(180px, 25vw, 360px);
+            color: rgba(255, 255, 255, 0.025);
+            pointer-events: none;
+        }
+
+        .eyebrow {
+            color: var(--accent);
+            font-family: "Space Mono", monospace;
+            font-size: 12px;
+            letter-spacing: 2px;
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            font-family: "Anton", sans-serif;
+            font-size: clamp(70px, 12vw, 170px);
+            line-height: 0.85;
+            letter-spacing: -3px;
+            max-width: 1000px;
+        }
+
+        .hero-description {
+            max-width: 700px;
+            color: var(--muted);
+            margin-top: 35px;
+            font-size: 17px;
+        }
+
+        /* GENERAL SECTIONS */
+
+        .section {
+            max-width: 1300px;
+            margin: auto;
+            padding: 100px 30px;
+            position: relative;
+        }
+
+        .section-label {
+            color: var(--accent);
+            font-family: "Space Mono", monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-family: "Anton", sans-serif;
+            font-size: clamp(45px, 7vw, 90px);
+            line-height: 0.95;
+            letter-spacing: -2px;
+            margin-bottom: 25px;
+        }
+
+        .intro-text {
+            max-width: 800px;
+            color: var(--muted);
+            font-size: 16px;
+        }
+
+        /* OSINT TYPES */
+
+        .types-grid {
+            margin-top: 55px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .type-card {
+            border: 1px solid var(--border);
+            background: rgba(13, 13, 13, 0.88);
+            padding: 28px;
+            min-height: 190px;
+            transition: 0.25s;
+        }
+
+        .type-card:hover {
+            border-color: #414141;
+            transform: translateY(-3px);
+        }
+
+        .type-number {
+            color: var(--accent);
+            font-family: "Space Mono", monospace;
+            font-size: 12px;
+        }
+
+        .type-card h3 {
+            margin-top: 35px;
+            font-family: "Space Mono", monospace;
+            font-size: 16px;
+        }
+
+        .type-card p {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* TWO SIDES */
+
+        .sides {
+            background: rgba(17, 21, 15, 0.9);
+            border-top: 1px solid #252b21;
+            border-bottom: 1px solid #252b21;
+        }
+
+        .sides-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 50px;
+        }
+
+        .side {
+            padding: 35px;
+            border: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .side.good {
+            border-top: 2px solid var(--accent);
+        }
+
+        .side.bad {
+            border-top: 2px solid var(--danger);
+        }
+
+        .side h3 {
+            font-family: "Space Mono", monospace;
+            font-size: 17px;
+            margin-bottom: 25px;
+        }
+
+        .side.good h3 {
+            color: var(--accent);
+        }
+
+        .side.bad h3 {
+            color: var(--danger);
+        }
+
+        .side ul {
+            list-style: none;
+        }
+
+        .side li {
+            padding: 12px 0 12px 18px;
+            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 14px;
+            position: relative;
+        }
+
+        .side li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        .side.bad li::before {
+            color: var(--danger);
+        }
+
+        .side li:last-child {
+            border-bottom: none;
+        }
+
+        /* PROFILE LAB */
+
+        .lab {
+            background: rgba(9, 9, 9, 0.92);
+        }
+
+        .lab-layout {
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 15px;
+            margin-top: 55px;
+        }
+
+        .profile {
+            border: 1px solid var(--border);
+            background: rgba(13, 13, 13, 0.94);
+            padding: 30px;
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .avatar {
+            width: 62px;
+            height: 62px;
+            border: 1px solid var(--border);
+            display: grid;
+            place-items: center;
+            background: #161616;
+            font-family: "Anton", sans-serif;
+            font-size: 27px;
+            color: var(--accent);
+        }
+
+        .profile-name {
+            font-family: "Space Mono", monospace;
+            font-weight: 700;
+        }
+
+        .profile-status {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .profile-data {
+            margin-top: 25px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .data-item {
+            border: 1px solid var(--border);
+            background: #101010;
+            padding: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+            color: var(--text);
+            width: 100%;
+        }
+
+        .data-item:hover,
+        .data-item.active {
+            border-color: var(--accent);
+        }
+
+        .data-label {
+            display: block;
+            color: var(--muted);
+            font-family: "Space Mono", monospace;
+            font-size: 10px;
+            margin-bottom: 5px;
+        }
+
+        .data-value {
+            font-size: 14px;
+        }
+
+        .analysis {
+            border: 1px solid var(--border);
+            background: rgba(13, 13, 13, 0.94);
+            padding: 35px;
+            min-height: 100%;
+        }
+
+        .analysis-top {
+            color: var(--accent);
+            font-family: "Space Mono", monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+        }
+
+        .analysis h3 {
+            font-family: "Anton", sans-serif;
+            font-size: 45px;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .analysis-text {
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        .analysis-warning {
+            margin-top: 35px;
+            padding: 20px;
+            background: #141414;
+            border-left: 2px solid var(--accent);
+            color: #bcbcbc;
+            font-size: 13px;
+        }
+
+        .counter {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border);
+            font-family: "Space Mono", monospace;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .counter strong {
+            color: var(--accent);
+            font-size: 22px;
+        }
+
+        /* DIGITAL FOOTPRINT */
+
+        .footprint {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 45px;
+        }
+
+        .footprint-card {
+            border: 1px solid var(--border);
+            padding: 25px;
+            background: rgba(13, 13, 13, 0.9);
+        }
+
+        .footprint-card strong {
+            display: block;
+            font-family: "Anton", sans-serif;
+            font-size: 40px;
+            color: var(--accent);
+        }
+
+        .footprint-card span {
+            display: block;
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* RULES */
+
+        .rules {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 45px;
+        }
+
+        .rule {
+            border: 1px solid var(--border);
+            padding: 25px;
+            background: rgba(13, 13, 13, 0.9);
+        }
+
+        .rule-number {
+            color: var(--accent);
+            font-family: "Space Mono", monospace;
+            font-size: 11px;
+        }
+
+        .rule h3 {
+            margin: 20px 0 8px;
+            font-family: "Space Mono", monospace;
+            font-size: 15px;
+        }
+
+        .rule p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* FOOTER */
+
+        .back-section {
+            border-top: 1px solid var(--border);
+            padding: 45px 30px;
+            text-align: center;
+            background: rgba(7, 7, 7, 0.85);
+        }
+
+        .back-link {
+            font-family: "Space Mono", monospace;
+            color: var(--accent);
+            font-size: 13px;
+        }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            color: var(--muted);
+            font-size: 12px;
+            max-width: 1300px;
+            margin: auto;
+            background: rgba(7, 7, 7, 0.85);
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 850px) {
+            .nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+            }
+
+            .types-grid,
+            .sides-grid,
+            .lab-layout,
+            .rules {
+                grid-template-columns: 1fr;
+            }
+
+            .footprint {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            h1 {
+                font-size: 80px;
+            }
+
+            .network-label {
+                display: none;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .nav,
+            .section,
+            .article-hero {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            h1 {
+                font-size: 62px;
+            }
+
+            .footprint {
+                grid-template-columns: 1fr;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<canvas id="osint-network"></canvas>
+
+<div class="network-overlay"></div>
+<div class="network-vignette"></div>
+<div class="scan-line"></div>
+
+<div class="network-label label-1">PUBLIC SOURCE // 001</div>
+<div class="network-label label-2">PROFILE // LINKED</div>
+<div class="network-label label-3">IMAGE // METADATA</div>
+<div class="network-label label-4">DOMAIN // SOURCE</div>
+<div class="network-label label-5">DATA // CORRELATION</div>
+
+
+<header class="header">
+    <nav class="nav">
+        <a href="index.html" class="logo">
+            КИБЕР<span>БЕЗОПАСНОСТЬ</span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="index.html#basics">ОСНОВЫ</a></li>
+            <li><a href="index.html#threats">УГРОЗЫ</a></li>
+            <li><a href="index.html#defense">ЗАЩИТА</a></li>
+            <li><a href="#laboratory">OSINT</a></li>
+            <li><a href="index.html#quiz">ТЕСТ</a></li>
+        </ul>
+    </nav>
+</header>
+
+
+<section class="article-hero">
+    <div class="eyebrow">ИНФОРМАЦИЯ / ОТКРЫТЫЕ ИСТОЧНИКИ</div>
+
+    <h1>OSINT</h1>
+
+    <p class="hero-description">
+        Разведка по открытым источникам — это сбор и анализ информации,
+        доступной без получения несанкционированного доступа к системам.
+        Один и тот же инструмент может использоваться специалистом
+        по безопасности или злоумышленником.
+    </p>
+</section>
+
+
+<section class="section">
+    <div class="section-label">01 / ЧТО ЭТО?</div>
+
+    <h2>РАЗВЕДКА<br>ПО ОТКРЫТЫМ ДАННЫМ</h2>
+
+    <p class="intro-text">
+        OSINT расшифровывается как Open Source Intelligence.
+        Это процесс поиска, проверки, сопоставления и анализа информации
+        из открытых источников: сайтов, социальных сетей, публикаций,
+        изображений, новостей и других общедоступных материалов.
+    </p>
+
+    <div class="types-grid">
+
+        <div class="type-card">
+            <span class="type-number">01</span>
+            <h3>WEB OSINT</h3>
+            <p>
+                Поиск информации на сайтах, форумах, в публикациях
+                и других открытых ресурсах.
+            </p>
+        </div>
+
+        <div class="type-card">
+            <span class="type-number">02</span>
+            <h3>SOCIAL OSINT</h3>
+            <p>
+                Анализ публичной информации из социальных сетей
+                и открытых профилей.
+            </p>
+        </div>
+
+        <div class="type-card">
+            <span class="type-number">03</span>
+            <h3>GEO OSINT</h3>
+            <p>
+                Работа с открытой географической информацией,
+                картами, фотографиями мест и другими признаками.
+            </p>
+        </div>
+
+        <div class="type-card">
+            <span class="type-number">04</span>
+            <h3>IMAGE OSINT</h3>
+            <p>
+                Анализ изображений и поиск дополнительного контекста
+                по визуальным признакам.
+            </p>
+        </div>
+
+        <div class="type-card">
+            <span class="type-number">05</span>
+            <h3>NEWS OSINT</h3>
+            <p>
+                Сопоставление сообщений из разных источников
+                для проверки информации и поиска несоответствий.
+            </p>
+        </div>
+
+        <div class="type-card">
+            <span class="type-number">06</span>
+            <h3>TECH OSINT</h3>
+            <p>
+                Изучение открытой технической информации
+                об организациях, сервисах и цифровой инфраструктуре.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+
+<section class="sides">
+    <div class="section">
+
+        <div class="section-label">02 / ДВЕ СТОРОНЫ</div>
+
+        <h2>ОДИН ИНСТРУМЕНТ.<br>РАЗНЫЕ ЦЕЛИ.</h2>
+
+        <p class="intro-text">
+            Сам по себе OSINT не является атакой. Важны цель,
+            контекст и то, как человек обращается с найденной информацией.
+        </p>
+
+        <div class="sides-grid">
+
+            <div class="side good">
+                <h3>ИСПОЛЬЗОВАНИЕ ВО БЛАГО</h3>
+
+                <ul>
+                    <li>Проверка фактов и информации</li>
+                    <li>Журналистские расследования</li>
+                    <li>Исследования и аналитика</li>
+                    <li>Поиск информации о киберугрозах</li>
+                    <li>Проверка собственной цифровой открытости</li>
+                </ul>
+            </div>
+
+            <div class="side bad">
+                <h3>ИСПОЛЬЗОВАНИЕ ВО ВРЕД</h3>
+
+                <ul>
+                    <li>Сбор информации о человеке без его ведома</li>
+                    <li>Подготовка социальной инженерии</li>
+                    <li>Создание подробного профиля жертвы</li>
+                    <li>Нарушение приватности</li>
+                    <li>Использование открытых данных для мошенничества</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<section class="section lab" id="laboratory">
+
+    <div class="section-label">03 / OSINT LABORATORY</div>
+
+    <h2>ЧТО МОЖНО УЗНАТЬ<br>ИЗ ОТКРЫТОГО ПРОФИЛЯ?</h2>
+
+    <p class="intro-text">
+        Перед тобой полностью вымышленный профиль.
+        Нажми на элементы и посмотри, какие выводы можно сделать
+        даже из обычной публичной информации.
+    </p>
+
+    <div class="lab-layout">
+
+        <div class="profile">
+
+            <div class="profile-header">
+                <div class="avatar">AX</div>
+
+                <div>
+                    <div class="profile-name">ALEX MORROW</div>
+                    <div class="profile-status">Вымышленный пользователь</div>
+                </div>
+            </div>
+
+            <div class="profile-data">
+
+                <button
+                    class="data-item"
+                    data-title="ИМЯ ПОЛЬЗОВАТЕЛЯ"
+                    data-text="Публичный никнейм может использоваться человеком сразу на нескольких площадках. Если пользователь везде применяет один и тот же ник, между его публичными профилями может появиться связь."
+                >
+                    <span class="data-label">USERNAME</span>
+                    <span class="data-value">alex_morrow</span>
+                </button>
+
+                <button
+                    class="data-item"
+                    data-title="ПУБЛИКАЦИЯ"
+                    data-text="Пост сообщает, что пользователь недавно посещал концерт. Даже без точного адреса публикация может дать временной контекст и показать интересы человека."
+                >
+                    <span class="data-label">POST</span>
+                    <span class="data-value">Фото с концерта</span>
+                </button>
+
+                <button
+                    class="data-item"
+                    data-title="ИГРОВАЯ АКТИВНОСТЬ"
+                    data-text="Публичные игровые профили могут показать предпочитаемые игры, никнейм и другую информацию, которую человек решил сделать доступной."
+                >
+                    <span class="data-label">GAME PROFILE</span>
+                    <span class="data-value">Публичный игровой профиль</span>
+                </button>
+
+                <button
+                    class="data-item"
+                    data-title="ФОТОГРАФИЯ"
+                    data-text="На фотографии могут быть видны дополнительные детали: название места, вывески, время публикации или другие объекты в кадре. Поэтому фотографии тоже являются частью цифрового следа."
+                >
+                    <span class="data-label">PHOTO</span>
+                    <span class="data-value">Фото из публичного аккаунта</span>
+                </button>
+
+                <button
+                    class="data-item"
+                    data-title="ИНТЕРЕСЫ"
+                    data-text="Несколько публичных публикаций могут вместе показать интересы человека. По отдельности они кажутся незначительными, но в совокупности создают более подробный цифровой профиль."
+                >
+                    <span class="data-label">INTERESTS</span>
+                    <span class="data-value">Игры / музыка / технологии</span>
+                </button>
+
+            </div>
+        </div>
+
+
+        <div class="analysis">
+
+            <div class="analysis-top">ANALYSIS CONSOLE</div>
+
+            <h3 id="analysisTitle">
+                ВЫБЕРИ<br>ЭЛЕМЕНТ
+            </h3>
+
+            <p class="analysis-text" id="analysisText">
+                Нажми на любой элемент слева.
+                Здесь появится объяснение того, какую информацию
+                потенциально можно получить из публичного источника.
+            </p>
+
+            <div class="analysis-warning">
+                <strong>ВАЖНО:</strong><br>
+                В этой демонстрации используется только вымышленный
+                профиль. Цель OSINT-анализа — понять цифровой след
+                и научиться защищать собственную информацию,
+                а не искать данные о конкретных людях.
+            </div>
+
+            <div class="counter">
+                ИССЛЕДОВАНО ОБЪЕКТОВ:
+                <strong id="counter">0</strong>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<section class="section">
+
+    <div class="section-label">04 / ЦИФРОВОЙ СЛЕД</div>
+
+    <h2>МЕЛОЧИ<br>СКЛАДЫВАЮТСЯ В КАРТИНУ</h2>
+
+    <p class="intro-text">
+        Главная особенность OSINT заключается не обязательно
+        в поиске одного большого секрета. Иногда важнее то,
+        что множество небольших публичных сведений можно
+        сопоставить между собой.
+    </p>
+
+    <div class="footprint">
+
+        <div class="footprint-card">
+            <strong>01</strong>
+            <span>Публичный никнейм</span>
+        </div>
+
+        <div class="footprint-card">
+            <strong>02</strong>
+            <span>Публикации и интересы</span>
+        </div>
+
+        <div class="footprint-card">
+            <strong>03</strong>
+            <span>Фотографии и контекст</span>
+        </div>
+
+        <div class="footprint-card">
+            <strong>04</strong>
+            <span>Связи между источниками</span>
+        </div>
+
+    </div>
+
+</section>
+
+
+<section
+    class="section"
+    style="border-top: 1px solid var(--border);"
+>
+
+    <div class="section-label">05 / ЗАЩИТА</div>
+
+    <h2>УМЕНЬШИ<br>СВОЙ ЦИФРОВОЙ СЛЕД</h2>
+
+    <div class="rules">
+
+        <div class="rule">
+            <span class="rule-number">01</span>
+            <h3>ПРОВЕРЯЙ ПУБЛИЧНОСТЬ</h3>
+            <p>
+                Периодически проверяй, какую информацию
+                о тебе могут увидеть посторонние люди.
+            </p>
+        </div>
+
+        <div class="rule">
+            <span class="rule-number">02</span>
+            <h3>НЕ ПУБЛИКУЙ ЛИШНЕЕ</h3>
+            <p>
+                Необязательно сообщать всему интернету
+                своё местоположение, расписание или другие
+                личные детали.
+            </p>
+        </div>
+
+        <div class="rule">
+            <span class="rule-number">03</span>
+            <h3>РАЗДЕЛЯЙ АККАУНТЫ</h3>
+            <p>
+                Для разных целей можно использовать разные
+                публичные идентификаторы и настройки приватности.
+            </p>
+        </div>
+
+        <div class="rule">
+            <span class="rule-number">04</span>
+            <h3>ДУМАЙ ПЕРЕД ПУБЛИКАЦИЕЙ</h3>
+            <p>
+                Представь, что опубликованную информацию
+                сможет увидеть совершенно незнакомый человек.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="section" style="border-top: 1px solid var(--border);">
+
+    <div class="section-label">06 / УПРАВЛЯЙ СВОИМ СЛЕДОМ</div>
+
+    <h2>ТЫ ОПРЕДЕЛЯЕШЬ,<br>ЧТО ОСТАЁТСЯ В СЕТИ</h2>
+
+    <p class="intro-text">
+        Цифровой след невозможно полностью стереть,
+        но им можно управлять. Перед публикацией информации
+        подумай, что она может рассказать о тебе сейчас
+        и через несколько лет.
+    </p>
+
+    <div class="rules">
+
+        <div class="rule">
+            <span class="rule-number">01</span>
+            <h3>УДАЛЯЙ СТАРОЕ</h3>
+            <p>
+                Периодически просматривай старые публикации,
+                фотографии и открытые профили и убирай то,
+                что больше не должно оставаться публичным.
+            </p>
+        </div>
+
+        <div class="rule">
+            <span class="rule-number">02</span>
+            <h3>ПРОВЕРЯЙ КОНТЕКСТ</h3>
+            <p>
+                Даже безобидная публикация может раскрыть
+                больше информации, чем кажется, если
+                объединить её с другими открытыми данными.
+            </p>
+        </div>
+
+        <div class="rule">
+            <span class="rule-number">03</span>
+            <h3>КОНТРОЛИРУЙ СВЯЗИ</h3>
+            <p>
+                Следи за тем, какие аккаунты, никнеймы
+                и публичные профили связаны между собой.
+            </p>
+        </div>
+
+        <div class="rule">
+            <span class="rule-number">04</span>
+            <h3>ДУМАЙ НА ШАГ ВПЕРЁД</h3>
+            <p>
+                Перед публикацией представь, какую картину
+                о тебе сможет собрать незнакомый человек
+                из всех доступных сведений.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+<div class="back-section">
+    <a href="index.html" class="back-link">
+        ← ВЕРНУТЬСЯ НА ГЛАВНУЮ
+    </a>
+</div>
+
+
+<footer>
+    <span>КИБЕРБЕЗОПАСНОСТЬ</span>
+    <span>Индивидуальный проект · 2026</span>
+</footer>
+
+
+<script>
+    /* OSINT NETWORK */
+
+    const canvas = document.getElementById("osint-network");
+    const ctx = canvas.getContext("2d");
+
+    let width;
+    let height;
+    let nodes = [];
+
+    function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+
+        const dpr = window.devicePixelRatio || 1;
+
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        createNodes();
+    }
+
+    function createNodes() {
+        nodes = [];
+
+        const count = Math.min(
+            65,
+            Math.max(28, Math.floor(window.innerWidth / 22))
+        );
+
+        for (let i = 0; i < count; i++) {
+            nodes.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.16,
+                vy: (Math.random() - 0.5) * 0.16,
+                radius: Math.random() * 1.4 + 0.5
+            });
+        }
+    }
+
+    function drawNetwork() {
+        ctx.clearRect(0, 0, width, height);
+
+        const maxDistance = 150;
+
+        for (let i = 0; i < nodes.length; i++) {
+            const a = nodes[i];
+
+            for (let j = i + 1; j < nodes.length; j++) {
+                const b = nodes[j];
+
+                const dx = a.x - b.x;
+                const dy = a.y - b.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < maxDistance) {
+                    const opacity =
+                        (1 - distance / maxDistance) * 0.18;
+
+                    ctx.beginPath();
+                    ctx.moveTo(a.x, a.y);
+                    ctx.lineTo(b.x, b.y);
+
+                    ctx.strokeStyle =
+                        `rgba(183, 255, 0, ${opacity})`;
+
+                    ctx.lineWidth = 0.6;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        nodes.forEach(node => {
+            ctx.beginPath();
+            ctx.arc(
+                node.x,
+                node.y,
+                node.radius,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle = "rgba(183, 255, 0, 0.38)";
+            ctx.fill();
+
+            node.x += node.vx;
+            node.y += node.vy;
+
+            if (node.x < -20 || node.x > width + 20) {
+                node.vx *= -1;
+            }
+
+            if (node.y < -20 || node.y > height + 20) {
+                node.vy *= -1;
+            }
+        });
+
+        requestAnimationFrame(drawNetwork);
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+
+    resizeCanvas();
+    drawNetwork();
+
+
+    /* PROFILE LAB */
+
+    const items = document.querySelectorAll(".data-item");
+    const title = document.getElementById("analysisTitle");
+    const text = document.getElementById("analysisText");
+    const counter = document.getElementById("counter");
+
+    let analyzed = 0;
+
+    items.forEach(item => {
+        item.addEventListener("click", () => {
+
+            items.forEach(element => {
+                element.classList.remove("active");
+            });
+
+            item.classList.add("active");
+
+            title.textContent = item.dataset.title;
+            text.textContent = item.dataset.text;
+
+            analyzed++;
+
+            counter.textContent = Math.min(
+                analyzed,
+                items.length
+            );
+        });
+    });
+</script>
+
+</body>
+</html>
